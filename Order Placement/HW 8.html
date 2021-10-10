@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<!-- saved from url=(0052)file:///C:/Users/walid/Downloads/Lecture8-start.html -->
+<html lang="en" dir="ltr">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Lecture 8</title>
+    <style type="text/css">
+      body {width:500px;}
+      div {border: 1px solid black;padding:10px;}
+      img {border: 1px solid black;width:200px;height:200px;}
+      table, th, td {border: 1px solid black; text-align:left; vertical-align:top; width:500px; padding:4px;}
+      tfoot {font-size:10pt; font-style:italic;}
+      .plain {border:none;width:100%;vertical-align:middle}
+    </style>
+
+    <!--download jQuery file from jQuery.com and save in same folder as html file-->
+    <script src="jquery-3.3.1.min.js"></script>
+    <script type="text/javascript">
+      //assign folowing jQuery events and function to the loaded/refreshed page
+      //jQuery: $(selecton: filter method)
+      $(document).ready(function(){
+
+        //highlight table header on hover
+        //selectars: tag type, id, instances of elements, etc...
+        //hover event has two functions: on mouseenter, on mouseout
+        $("th").hover(function(){
+          $(this).css("background-color", "yellow");
+          var i = $(this).index();
+          //index method returns which instance of element is selected in entire html page
+          //$("selector").find("element") look within an element
+          //look for td element of tindex i inside element with id #pInfo
+          $("#pInfo").find("td:eq(" + i + ")").css("background-color", "yellow");
+        }, function(){
+          $(this).css("background-color", "white");
+          var i = $(this).index();
+          $("#pInfo").find("td:eq(" + i + ")").css("background-color", "white");
+        });
+
+        //update datalist when user clicks category radio button
+        $("input[name='category']").click(function(){
+          var x = $("input[name='category']:checked").val();
+          $("#pList").attr("list", x);//set the list attribute to furniture or Office
+          $("#pList").val("");//clear any previously entered values
+        });
+
+        //add product to order list in textarea
+        //update order type for max delivery time
+        //use global variable for two functions
+        var oType = 100;
+        $("#pList").change(function(){
+          $("#orderList").append($("#pList").val());
+          $("#orderList").append("\n");
+          $("#pList").val("");
+
+          var radioVals = ["furniture", "office"];
+          var pType = $("input[name='category']:checked").val();
+          var j = radioVals.indexOf(pType);
+          oType = Math.min(j,oType);
+
+        })
+
+        //place order button click event should calculate delivery date
+        //keep track of orders placed and update delivery time =  maximum time (min index)
+        $("#pOrder").click(function(){
+          var delivTime = [7,2];
+
+          //check if text box id filled when submitting
+          if ($("#orderList").find($("pOrder").val(""))) {
+            console.error("Select an order");
+         }
+
+          var cDate = new Date();
+          var dDate = new Date(cDate.getTime() + delivTime[oType]*24*60*60*1000);
+          $("#orderDate").text(cDate.toString().substring(0,15));
+          $("#delivDate").text(dDate.toString().substring(0,15));
+          //use string manipulation to grab first part of date expression
+          //or cDate.getMonth() + "/" + cDate.getDate() + "/" + cDate.getFullYear()
+        });
+
+      });
+    </script>
+
+  </head>
+
+  <body>
+    <table>
+      <tbody>
+        <tr>
+          <td class="plain"><h1>Place an Order</h1></td>
+          <td class="plain" rowspan="2"><img id="Himg" src="order.png"></td>
+        </tr>
+        <tr>
+          <td class="plain">Place an order and calculate estimated arrival time.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <br>
+    <table id="pInfo">
+      <thead>
+        <tr><th id="furH">Furniture</th>
+        <th id="offH">Office Supplies</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td id="fInfo"><ul><li>Chair</li><li>Table</li><li>Bookshelf</li></ul></td>
+          <td id="oInfo"><ul><li>Pencils</li><li>Highlighters</li><li>Markers</li><li>Notebooks</li><li>Tape</li><li>Scissors</li></ul></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr><td>1 week assembly time required</td>
+        <td>ships in 2 days</td>
+      </tr></tfoot>
+    </table>
+
+    <br>
+    <div>
+    <form name="orderF" action="file:///C:/Users/walid/Downloads/www.vt.edu" method="post">
+      <table class="plain">
+      <tbody>
+      <tr>
+        <td class="plain">
+      <p>Select product category.</p>
+      <p><input type="radio" name="category" value="furniture" checked=""><label>Furniture</label></p><p>
+      </p><p><input type="radio" name="category" value="office"><label>Office Supplies</label></p>
+
+      <p>Choose product from list.</p>
+      <p><input id="pList" list="furniture" name="product"></p>
+      <datalist id="furniture">
+        <option value="chair"></option>
+        <option value="table"></option>
+        <option value="bookshelf"></option>
+      </datalist>
+      <datalist id="office">
+        <option value="pencils"></option>
+        <option value="highlighters"></option>
+        <option value="markers"></option>
+        <option value="notebooks"></option>
+        <option value="tape"></option>
+        <option value="scissors"></option>
+      </datalist>
+        </td>
+        <td class="plain">
+      <p>Current order:</p>
+      <p><textarea id="orderList" cols="30" rows="8" name="cOrders"></textarea></p>
+        </td>
+      </tr>
+      </tbody>
+      </table>
+
+      <p>Click button to place order.</p>
+      <p><input id="pOrder" type="button" name="order" value="Place Order"></p>
+    </form>
+    </div>
+
+    <br>
+    <div>
+    <p><strong>Total Products Ordered: </strong> <span id="orderNum"></span></p>
+    <p><strong>Order Date: </strong> <span id="orderDate"></span></p>
+    <p><strong>Estimated Delivery Date: </strong> <span id="delivDate"></span></p>
+    </div>
+
+</body></html>
